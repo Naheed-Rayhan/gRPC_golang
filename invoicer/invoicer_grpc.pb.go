@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Invoicer_Create_FullMethodName = "/Invoicer/Create"
+	Invoicer_Update_FullMethodName = "/Invoicer/Update"
 )
 
 // InvoicerClient is the client API for Invoicer service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InvoicerClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	Update(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
 }
 
 type invoicerClient struct {
@@ -47,11 +49,22 @@ func (c *invoicerClient) Create(ctx context.Context, in *CreateRequest, opts ...
 	return out, nil
 }
 
+func (c *invoicerClient) Update(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateResponse)
+	err := c.cc.Invoke(ctx, Invoicer_Update_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InvoicerServer is the server API for Invoicer service.
 // All implementations must embed UnimplementedInvoicerServer
 // for forward compatibility.
 type InvoicerServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
+	Update(context.Context, *CreateRequest) (*CreateResponse, error)
 	mustEmbedUnimplementedInvoicerServer()
 }
 
@@ -64,6 +77,9 @@ type UnimplementedInvoicerServer struct{}
 
 func (UnimplementedInvoicerServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedInvoicerServer) Update(context.Context, *CreateRequest) (*CreateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
 func (UnimplementedInvoicerServer) mustEmbedUnimplementedInvoicerServer() {}
 func (UnimplementedInvoicerServer) testEmbeddedByValue()                  {}
@@ -104,6 +120,24 @@ func _Invoicer_Create_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Invoicer_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InvoicerServer).Update(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Invoicer_Update_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InvoicerServer).Update(ctx, req.(*CreateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Invoicer_ServiceDesc is the grpc.ServiceDesc for Invoicer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +148,10 @@ var Invoicer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _Invoicer_Create_Handler,
+		},
+		{
+			MethodName: "Update",
+			Handler:    _Invoicer_Update_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

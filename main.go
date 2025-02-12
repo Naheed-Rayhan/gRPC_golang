@@ -15,7 +15,14 @@ type myInvoicerServer struct {
 func (s myInvoicerServer) Create(ctx context.Context, req *invoicer.CreateRequest) (*invoicer.CreateResponse, error) {
 	return &invoicer.CreateResponse{
 		Pdf:  []byte(req.From),
-		Docx: []byte("test"),
+		Docx: []byte("ook"),
+	}, nil
+}
+
+func (s myInvoicerServer) Update(ctx context.Context, req *invoicer.CreateRequest) (*invoicer.CreateResponse, error) {
+	return &invoicer.CreateResponse{
+		Pdf:  []byte(req.From),
+		Docx: []byte("updated docx"),
 	}, nil
 }
 
